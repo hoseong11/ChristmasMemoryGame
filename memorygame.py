@@ -26,7 +26,7 @@ ROWS = 4
 COLS = 4
 
 # 폰트 설정
-FONT = pygame.font.Font(None, 36)
+FONT = pygame.font.Font('font/notosans.ttf', 36)
 
 # 크리스마스 테마 이미지 리스트 (실제 이미지 파일 경로로 대체해야 함)
 CHRISTMAS_IMAGES = [
@@ -112,8 +112,8 @@ class MemoryGame:
         if len(self.revealed_cards) == 2:
             self.attempts += 1
             self.waiting_for_flip = True  # 카드 뒤집는 동안 다른 카드 클릭 방지
-            self.second_card_time = pygame.time.get_ticks()  # 0.9초 시간 기록
-            pygame.time.set_timer(pygame.USEREVENT, 900)  # 0.9초 후 타이머 이벤트 시작
+            self.second_card_time = pygame.time.get_ticks()  # 0.5초 시간 기록
+            pygame.time.set_timer(pygame.USEREVENT, 500)  # 0.5초 후 타이머 이벤트 시작
 
     def update_flip(self):
         for card in self.cards:
@@ -125,24 +125,30 @@ class MemoryGame:
                     card['revealed'] = True  # 카드가 뒤집혀서 보여짐
 
     def is_game_over(self):
-        return len(self.matched_cards)
+        return len(self.matched_cards) == ROWS * COLS 
 
     def show_game_over(self):
         end_time = time.time()
         total_time = int(end_time - self.start_time)
         
+       
         SCREEN.fill(WHITE)
         game_over_text = FONT.render('게임 완료!', True, RED)
         time_text = FONT.render(f'총 시간: {total_time}초', True, BLACK)
         attempts_text = FONT.render(f'시도 횟수: {self.attempts}', True, BLACK)
         completion_text = FONT.render('다 맞추셨습니다!', True, GREEN)  # 완료 메시지 추가
+
+
+        record_text = FONT.render(f'최종 기록된 시간: {total_time}초', True, GREEN)
+     
+    
         
         SCREEN.blit(game_over_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 100))
         SCREEN.blit(time_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2))
         SCREEN.blit(attempts_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 50))
         SCREEN.blit(completion_text, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100))  # 완료 메시지 위치
         
-        SCREEN.display.flip()
+        pygame.display.flip()
         pygame.time.wait(3000)
 
     def remove_matched_cards(self):
